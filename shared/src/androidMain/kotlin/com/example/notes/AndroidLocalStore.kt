@@ -16,7 +16,7 @@ class AndroidLocalStore(private val context: Context, private val fileName: Stri
             val f = file()
             if (!f.exists()) return emptyList()
             val text = f.readText()
-            if (text.isBlank()) emptyList() else json.decodeFromString(text)
+            if (text.isBlank()) emptyList() else json.decodeFromString<List<Note>>(text)
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
@@ -26,7 +26,7 @@ class AndroidLocalStore(private val context: Context, private val fileName: Stri
     override suspend fun saveAll(notes: List<Note>) {
         try {
             val f = file()
-            f.writeText(json.encodeToString(notes))
+            f.writeText(json.encodeToString<List<Note>>(notes))
         } catch (e: Exception) {
             e.printStackTrace()
         }

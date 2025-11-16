@@ -1,7 +1,7 @@
 package com.example.notes
 
 import androidx.compose.runtime.Composable
-import kotlinx.coroutines.MainScope
+import androidx.compose.runtime.rememberCoroutineScope
 
 // Desktop actual implementation
 actual fun provideLocalStore(): LocalStore = FileLocalStore()
@@ -16,7 +16,7 @@ object DesktopServices {
 
 @Composable
 fun MainNotesView() {
-    val scope = MainScope()
+    val scope = rememberCoroutineScope()
     NotesScreen(DesktopServices.repo, DesktopServices.syncManager, scope)
 }
 

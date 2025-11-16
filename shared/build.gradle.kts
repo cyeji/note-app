@@ -31,6 +31,8 @@ kotlin {
                 implementation(compose.components.resources)
                 // JSON serialization for saving/loading notes
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+                // Coroutines for async operations
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
             }
         }
         val androidMain by getting {
@@ -53,6 +55,15 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.common)
             }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+            }
+        }
+        val desktopTest by getting {
+            dependsOn(commonTest)
         }
     }
 }

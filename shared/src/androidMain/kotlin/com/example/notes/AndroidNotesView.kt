@@ -2,8 +2,7 @@ package com.example.notes
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import kotlinx.coroutines.MainScope
+import androidx.compose.runtime.rememberCoroutineScope
 
 // Android services singleton
 object AndroidServices {
@@ -28,7 +27,7 @@ object AndroidServices {
 
 @Composable
 fun MainNotesView() {
-    val scope = remember { MainScope() }
+    val scope = rememberCoroutineScope()
     NotesScreen(AndroidServices.repo, AndroidServices.syncManager, scope)
 }
 

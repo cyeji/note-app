@@ -1,27 +1,31 @@
 package com.example.notes
 
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+
 class FakeServer {
     private val data = mutableMapOf<String, Note>()
+    private val mutex = Mutex()
 
-    @Synchronized
-    fun loadAll(): List<Note> = data.values.toList()
+    suspend fun loadAll(): List<Note> = mutex.withLock {
+        data.values.toList()
+    }
 
-    @Synchronized
-    fun upsert(note: Note) {
+    suspend fun upsert(note: Note) = mutex.withLock {
         val existing = data[note.id]
         if (existing == null || note.updatedAt >= existing.updatedAt) {
             data[note.id] = note
         }
     }
 
-    @Synchronized
-    fun replaceAll(notes: List<Note>) {
+    suspend fun replaceAll(notes: List<Note>) = mutex.withLock {
         data.clear()
         notes.forEach { data[it.id] = it }
     }
 
-    @Synchronized
-    fun clear() = data.clear()
+    suspend fun clear() = mutex.withLock {
+        data.clear()
+    }
 }
 
 

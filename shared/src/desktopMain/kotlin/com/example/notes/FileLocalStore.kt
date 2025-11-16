@@ -15,7 +15,7 @@ class FileLocalStore(private val path: Path = defaultPath()) : LocalStore {
         return try {
             if (!Files.exists(path)) return emptyList()
             val text = Files.readString(path)
-            if (text.isBlank()) emptyList() else json.decodeFromString(text)
+            if (text.isBlank()) emptyList() else json.decodeFromString<List<Note>>(text)
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
@@ -26,7 +26,7 @@ class FileLocalStore(private val path: Path = defaultPath()) : LocalStore {
         try {
             val dir = path.parent
             if (dir != null && !Files.exists(dir)) Files.createDirectories(dir)
-            val content = json.encodeToString(notes)
+            val content = json.encodeToString<List<Note>>(notes)
             Files.writeString(path, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
         } catch (e: Exception) {
             e.printStackTrace()

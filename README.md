@@ -47,17 +47,143 @@
 - `desktopApp/` - Desktop 관련 코드
 - `readme_images/` - 문서 이미지
 
-빌드 및 실행 (macOS 기준)
-- Desktop 실행
+## 빌드 및 실행
+
+### 사전 요구사항
+- JDK 17 이상
+- Android Studio (Android 앱용)
+  - Android SDK 설치 필요
+  - `local.properties` 파일에 SDK 경로 설정:
+    ```properties
+    sdk.dir=/Users/사용자명/Library/Android/sdk
+    ```
+  - 또는 `ANDROID_HOME` 환경 변수 설정
+- Xcode (iOS 앱용, macOS만)
+  - Xcode Command Line Tools 설치 필요
+  - `xcode-select --install` 실행
+
+### 1. Desktop 앱 실행 (macOS / Windows / Linux)
+
+#### macOS / Linux
 ```bash
 ./gradlew :desktopApp:run
 ```
-- Android 빌드(설치/실행은 IDE 또는 디바이스 필요)
+
+#### Windows
 ```bash
+gradlew.bat :desktopApp:run
+```
+
+**테스트 항목:**
+- 노트 추가/수정/삭제
+- Sync 버튼 동작
+- 앱 재시작 후 데이터 유지 (`~/.compose_notes/notes.json`)
+
+### 2. Android 앱 실행
+
+#### 방법 1: Gradle로 직접 설치
+```bash
+# Android 에뮬레이터 또는 실제 기기가 연결되어 있어야 함
 ./gradlew :androidApp:installDebug
 ```
 
-테스트
+#### 방법 2: Android Studio에서 실행
+1. Android Studio에서 프로젝트 열기
+2. `androidApp` 모듈 선택
+3. 에뮬레이터 또는 실제 기기 선택
+4. Run 버튼 클릭 (⌘R 또는 Shift+F10)
+
+**테스트 항목:**
+- 노트 추가/수정/삭제
+- Sync 버튼 동작
+- 앱 재시작 후 데이터 유지 (앱 내부 저장소)
+
+### 3. iOS 앱 실행 (macOS만 가능)
+
+#### 방법 1: Xcode에서 실행
 ```bash
+# Xcode 프로젝트 열기
+open iosApp/iosApp.xcodeproj
+```
+
+Xcode에서:
+1. 시뮬레이터 선택 (예: iPhone 15)
+2. Run 버튼 클릭 (⌘R)
+3. 또는 실제 iPhone 연결 후 선택
+
+#### 방법 2: 터미널에서 빌드
+```bash
+# iOS 프레임워크 빌드
+./gradlew :shared:embedAndSignAppleFrameworkForXcode
+```
+
+**테스트 항목:**
+- 노트 추가/수정/삭제
+- Sync 버튼 동작
+- 앱 재시작 후 데이터 유지
+
+### 4. 모든 플랫폼 빌드 확인
+
+```bash
+# Desktop 빌드
+./gradlew :desktopApp:build
+
+# Android 빌드
+./gradlew :androidApp:assembleDebug
+
+# iOS 프레임워크 빌드 (macOS만)
+./gradlew :shared:iosX64Binaries
+./gradlew :shared:iosArm64Binaries
+```
+
+### 테스트
+
+#### 단위 테스트 실행
+```bash
+# Desktop 테스트 (JVM)
+./gradlew :shared:desktopTest
+
+# 모든 플랫폼 테스트 (Android SDK 필요)
 ./gradlew test
 ```
+
+#### 테스트 커버리지
+현재 구현된 테스트:
+- ✅ **NoteRepositoryTest**: CRUD 기능, 정렬, 소프트 삭제
+- ✅ **SyncManagerTest**: Push/Pull, Last-Write-Wins 정책, 충돌 해결
+- ✅ **FakeServerTest**: 서버 저장소 기능, LWW 정책
+
+테스트 파일 위치: `shared/src/commonTest/kotlin/com/example/notes/`
+
+## 현재 테스트 상태
+
+### ✅ Desktop (macOS)
+- **상태**: 정상 작동
+- **실행 방법**: `./gradlew :desktopApp:run`
+- **테스트 완료 항목**:
+  - ✅ 노트 추가/수정/삭제
+  - ✅ Sync 버튼 동작
+  - ✅ 데이터 영속화 (`~/.compose_notes/notes.json`)
+
+### ⚠️ Android
+- **상태**: Android SDK 설정 필요
+- **설정 방법**:
+  1. Android Studio 설치
+  2. `local.properties` 파일 생성:
+     ```properties
+     sdk.dir=/Users/사용자명/Library/Android/sdk
+     ```
+  3. 에뮬레이터 실행 또는 실제 기기 연결
+  4. `./gradlew :androidApp:installDebug` 실행
+
+### ⚠️ iOS
+- **상태**: Xcode 설정 필요
+- **설정 방법**:
+  1. Xcode 설치
+  2. Command Line Tools 설치: `xcode-select --install`
+  3. `open iosApp/iosApp.xcodeproj`로 Xcode에서 열기
+  4. 시뮬레이터 또는 실제 iPhone에서 실행
+
+### 📝 Windows Desktop
+- **상태**: Windows PC에서 테스트 필요
+- **실행 방법**: Windows PC에서 `gradlew.bat :desktopApp:run`
