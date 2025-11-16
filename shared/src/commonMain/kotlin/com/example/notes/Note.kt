@@ -1,17 +1,29 @@
 package com.example.notes
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Contextual
-import java.util.UUID
 
 @Serializable
 data class Note(
-    val id: String = UUID.randomUUID().toString(),
+    val id: String,
     val title: String = "",
     val content: String = "",
-    val updatedAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long,
     val deleted: Boolean = false
 )
 
-fun Note.touch(now: Long = System.currentTimeMillis()) = copy(updatedAt = now)
+// Platform-specific utilities
+expect fun generateNoteId(): String
+expect fun currentTimeMillis(): Long
+
+// Extension helpers
+fun Note.touch(now: Long = currentTimeMillis()) = copy(updatedAt = now)
+
+// Factory function for creating new notes
+fun createNote(
+    id: String = generateNoteId(),
+    title: String = "",
+    content: String = "",
+    updatedAt: Long = currentTimeMillis(),
+    deleted: Boolean = false
+) = Note(id, title, content, updatedAt, deleted)
 

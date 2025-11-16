@@ -61,11 +61,11 @@ fun NotesScreen(repo: NoteRepository, syncManager: SyncManager, scope: Coroutine
             editing?.let { n ->
                 Column {
                     BasicTextField(value = n.title, onValueChange = { new ->
-                        editing = n.copy(title = new, updatedAt = System.currentTimeMillis())
+                        editing = n.copy(title = new, updatedAt = currentTimeMillis())
                     })
                     Spacer(Modifier.height(4.dp))
                     BasicTextField(value = n.content, onValueChange = { new ->
-                        editing = n.copy(content = new, updatedAt = System.currentTimeMillis())
+                        editing = n.copy(content = new, updatedAt = currentTimeMillis())
                     })
                     Row {
                         Button(onClick = {
@@ -89,7 +89,7 @@ fun NotesScreen(repo: NoteRepository, syncManager: SyncManager, scope: Coroutine
                 }
             } ?: Button(onClick = {
                 scope.launch {
-                    val new = Note(title = "New note", content = "")
+                    val new = createNote(title = "New note", content = "")
                     repo.upsert(new)
                     notes = repo.getAll()
                 }

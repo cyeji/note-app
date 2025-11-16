@@ -3,7 +3,10 @@ import androidx.compose.ui.window.application
 import com.example.notes.MainNotesView
 
 fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
+    Window(
+        onCloseRequest = ::exitApplication,
+        title = "Notes App - Desktop"
+    ) {
         MainNotesView()
     }
 }
